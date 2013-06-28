@@ -53,10 +53,10 @@ echo Balance=$balance
 distributionPct=$(echo "scale=8; $((100 + ($ANDOM$RANDOM$RANDOM$RANDOM % 900000))) / 1000000" | bc)
 echo Distribution = $distributionPct
 
-send=$(printf "%2.6f" $( echo "scale=2; $balance * $distributionPct" | bc))
+send=$(printf "%2.8f" $( echo "scale=2; $balance * $distributionPct" | bc))
 echo Send=$send
 
 command="electrum -w $walletFrom --fromaddr=$fromAddress --changeaddr=$changeAddress createrawtransaction '[{$txhash,$index}]' '{\"$toAddress\":$send}'"
-echo ==========
+echo == Unsigned TX ==
 eval $command | tee /tmp/unsigned
 cat /tmp/unsigned | qrencode -o - | display
