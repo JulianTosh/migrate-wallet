@@ -4,7 +4,7 @@ usage() {
   cat << _EOU_
 Usage: $0 <source wallet file> <target wallet file>
   $0 grabs unspent inputs from a source electrum wallet and splits them into
-  two inputs in the target wallet.
+  two inputs in the target wallet - one as a spend, one as change.
 _EOU_
 }
 
