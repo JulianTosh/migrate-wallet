@@ -10,6 +10,7 @@ _EOU_
 
 if [ $# -eq 0 ]; then
  usage 
+ exit
 fi
 
 walletFrom=$HOME/.electrum/$1
