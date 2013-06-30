@@ -21,12 +21,14 @@ if [ ! -f $walletFrom ]; then
   usage
   exit
 fi
+echo $walletFrom exists.
 
 if [ ! -f $walletTo ]; then
   echo $walletTo does not exist
   usage
   exit
 fi
+echo $walletTo exists.
 
 electrum -w $walletFrom listunspent > /tmp/unspent
 cat /tmp/unspent | head -n 8 | awk '/{/,/}/' > /tmp/input
@@ -48,7 +50,7 @@ index=$(cat /tmp/input | grep index | sed 's/index/vout/; s/[ \t\s,]//g')
 echo Index=$index
 
 echo "Getting balance of unspent input..."
-balance=$(electrum -w $walletFrom getaddressbalance $fromAddress | grep "confirmed" | sed 's/.*\"\([0-9\.]\+\)\"$/\1/')
+balance=$(electrum -w $walletFrom getaddressbalance $fromAddress | grep "\bconfirmed" | sed 's/.*\"\([0-9\.]\+\)\"$/\1/')
 echo Balance=$balance
 
 distributionPct=$(echo "scale=8; $((100 + ($ANDOM$RANDOM$RANDOM$RANDOM % 900000))) / 1000000" | bc)
@@ -58,6 +60,8 @@ send=$(printf "%2.8f" $( echo "scale=2; $balance * $distributionPct" | bc))
 echo Send=$send
 
 command="electrum -w $walletFrom --fromaddr=$fromAddress --changeaddr=$changeAddress createrawtransaction '[{$txhash,$index}]' '{\"$toAddress\":$send}'"
+echo Command=$command
+echo
 echo == Unsigned TX ==
 eval $command | tee /tmp/unsigned
 cat /tmp/unsigned | qrencode -o - | display
